@@ -20,6 +20,7 @@ You can read more in our [contribution guidelines](CONTRIBUTING.md).
 ## Authors
 
 David Gackstetter, Parid Varoshi, Syed Saad Zahidi
+
 david.gackstetter@tum.de
 
 
