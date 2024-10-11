@@ -26,7 +26,7 @@ david.gackstetter@tum.de
 
 ## License
 
-Copyright (C) 2024 TBA (Technical University of Munich, Arcisstr. 11, 80333 Munich, Germany).
+Copyright (C) 2024 Technical University of Munich, Arcisstr. 11, 80333 Munich, Germany.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
