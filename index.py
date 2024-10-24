@@ -241,19 +241,26 @@ def create_node_red_new_settings_file(clientID, clientSecret, callbackURL, KEYCL
 
 
 
-def replace_settings_file(node_red_storage, clientID, clientSecret, callbackURL, KEYCLOAK_SERVER_URL, KEYCLOAK_REALM, email, ROOT_URL):
+def replace_settings_file(node_red_storage, clientID, clientSecret, callbackURL, KEYCLOAK_SERVER_URL, KEYCLOAK_REALM, email, ROOT_URL,container_node_red_id):
     # Construct the mountpoint using the provided volume name
-    mountpoint = subprocess.check_output(f"docker volume inspect {node_red_storage} --format='{{{{.Mountpoint}}}}'", shell=True, text=True).strip()
-
-    # Construct the full path to the settings file
-    settings_file_path = f"{mountpoint}/settings.js"
-
-    new_file_content = create_node_red_new_settings_file(
-        clientID, clientSecret, callbackURL, KEYCLOAK_SERVER_URL, KEYCLOAK_REALM, email, ROOT_URL)
-
-    # Write new_file_content to the settings file
-    with open(settings_file_path, "w") as settings_file:
-        settings_file.write(new_file_content)
+    new_file_content = create_node_red_new_settings_file(clientID, clientSecret, callbackURL, KEYCLOAK_SERVER_URL, KEYCLOAK_REALM, email, ROOT_URL)
+    command = f"echo '{new_file_content}' > /data/settings.js"
+    try:
+        subprocess.run(
+            [
+                "docker",
+                "exec",
+                container_node_red_id,  # Name of the running container
+                "sh",
+                "-c",
+                command  # Execute the echo command in the container's shell
+            ],
+            check=True  # Raise an error if the command fails
+        )
+        print(f"Successfully replaced /data/settings.js in the container {container_node_red_id}.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error writing to settings.js: {e}")
+    
 
 def generate_email(status, token, firstName, expiredAt):
     try:
@@ -1204,8 +1211,11 @@ def validate_user():
         new_node_red_port = new_node_red_port
         node_red_name = f"node_red_{service_id}"
         node_red_name_storage_name = f"node_red_storage_{service_id}"
+        # mountpoint = '/data'
+        # create_node_red_instance_path = os.path.join(mountpoint, node_red_name)
+        # os.makedirs(create_node_red_instance_path, exist_ok=True)
 
-        command_create_node_red_instance = f"docker run -d --restart always --init  -p {new_node_red_port}:1880 -v {node_red_name_storage_name}:/data --name {node_red_name} nodered/node-red"
+        command_create_node_red_instance = f"docker run --network=sensorhub_lite -d --restart always --init  -p {new_node_red_port}:1880 -v {node_red_name_storage_name}:/data --user 1000:1000 --name {node_red_name} nodered/node-red"
         result_command_create_new_node_instance = subprocess.run(
             command_create_node_red_instance, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -1233,7 +1243,7 @@ def validate_user():
         # Step 14 : Install passport-keycloak-oauth2-oidc in the new node-red container
 
         command_node_red_dependency_installation = ["docker", "exec", container_node_red_id, "bash", "-c",
-                                                    "cd /usr/src/node-red/node_modules && npm install passport-keycloak-oauth2-oidc"]
+                                                    f"cd /usr/src/node-red/node_modules && npm install passport-keycloak-oauth2-oidc"]
 
         command_red_node = subprocess.run(
             command_node_red_dependency_installation)
@@ -1448,7 +1458,7 @@ def validate_user():
         print(new_clientId_node_red + " TEST ", flush=True)
 
         replace_settings_file(node_red_name_storage_name,
-                              new_clientId_node_red, node_red_client_secret, callbackURL, KEYCLOAK_SERVER_URL, KEYCLOAK_REALM, email, ROOT_URL)
+                              new_clientId_node_red, node_red_client_secret, callbackURL, KEYCLOAK_SERVER_URL, KEYCLOAK_REALM, email, ROOT_URL,container_node_red_id)
 
         # Successful settings.js update
         query = "UPDATE user_registered SET node_red_replace_settings = 1 WHERE token = %s;"
@@ -2202,7 +2212,34 @@ def test_path():
         return jsonify({'success': False, 'error': f"Error: {e}"})
 
  
-    
+@app.route('/create_js_file', methods=['GET'])
+def create_js_file():
+    # Define the parent directory where the shared volume is mounted
+    mountpoint = '/data'  # This is the path where your volume is mounted inside the container
+
+    # Create a new folder inside the shared_volume (e.g., 'new_folder')
+    folder_name = 'new_folder'
+    new_folder_path = os.path.join(mountpoint, folder_name)
+
+    try:
+        # Create the directory if it doesn't exist
+        os.makedirs(new_folder_path, exist_ok=True)
+    except Exception as e:
+        return jsonify({"error": f"Failed to create folder: {str(e)}"}), 500
+
+    # Define the path for the new JS file inside the created folder
+    js_file_path = os.path.join(new_folder_path, 'test_file.js')
+
+    # Content to write into the JS file
+    js_content = "console.log('This is a test JS file inside a new folder!');\n"
+
+    # Write content to the file
+    try:
+        with open(js_file_path, 'w') as js_file:
+            js_file.write(js_content)
+        return jsonify({"message": "File and folder created successfully!", "file_path": js_file_path}), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to create file: {str(e)}"}), 500
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port="4500")
 
