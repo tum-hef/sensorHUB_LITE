@@ -49,6 +49,7 @@ You can read more in our [contribution guidelines](CONTRIBUTING.md).
 -   `-e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin`: These environment variables set the username and password for the initial Keycloak administrator account. In this case, the username is "admin" and the password is also "admin."
 -   `-e PROXY_ADDRESS_FORWARDING=true`: This environment variable is set to "true" and is related to handling proxy address forwarding. It is often used when Keycloak is running behind a reverse proxy.
 -   `quay.io/keycloak/keycloak:23.0.6`: This is the name of the Docker image and 23.0.6 is the version that will be used to create the container. It specifies the official Keycloak Docker image provided by the quay organization.
+-   `start-dev`: This is used because we are using it in HTTP meanwhile start is used for HTTPS.
 
 
   
