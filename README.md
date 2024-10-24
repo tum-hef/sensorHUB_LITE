@@ -42,10 +42,11 @@ You can read more in our [contribution guidelines](CONTRIBUTING.md).
       
   #### Installing Keycloak and running it from docker
 
-     docker run -d --name keycloak --restart=always -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e PROXY_ADDRESS_FORWARDING=true quay.io/keycloak/keycloak:23.0.6 start-dev
+     docker run -d --name keycloak --network=sensorhub_lite --restart=always -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e PROXY_ADDRESS_FORWARDING=true quay.io/keycloak/keycloak:23.0.6 start-dev
 -   `docker run`: This is the command to run a Docker container.
 -   `-d`: This flag stands for "detached" mode, which means the container runs in the background.
 -   `--name keycloak`: This flag assigns the name "keycloak" to the running container.
+-   `--network`: This flag assigns the network to the running container.
 -   `--restart always`: This flag ensures that the container automatically restarts if it stops unexpectedly.
 -   `-p 8080:8080`: This flag maps port 8080 on the host machine to port 8080 on the container. Port 8080 is typically used for accessing Keycloak's web interface.
 -   `-e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin`: These environment variables set the username and password for the initial Keycloak administrator account. In this case, the username is "admin" and the password is also "admin."
@@ -136,8 +137,11 @@ The provided commands configure the firewall to allow all incoming and outgoing 
 
 ### Deploying sensorHUB_LITE
 
+Create image from the docker file inside repository
+docker build -t sensorHUB_LITE.
 
-
+Running the container
+docker run --network=sensorhub_lite -u root -d -p 4500:4500 --env-file .env --name sensorHUB_LITE_Container  -v /var/run/docker.sock:/var/run/docker.sock --restart always sensorHUB_LITE
 ```
     
 
