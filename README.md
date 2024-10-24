@@ -138,7 +138,7 @@ The provided commands configure the firewall to allow all incoming and outgoing 
 ### Deploying sensorHUB_LITE
 
 Create image from the docker file inside repository
-docker build -t sensorHUB_LITE.
+```docker build -t sensorHUB_LITE .```
 
 Running the container
 docker run --network=sensorhub_lite -u root -d -p 4500:4500 --env-file .env --name sensorHUB_LITE_Container  -v /var/run/docker.sock:/var/run/docker.sock --restart always sensorHUB_LITE
