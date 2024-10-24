@@ -37,7 +37,9 @@ You can read more in our [contribution guidelines](CONTRIBUTING.md).
 ## Compiling
 
 ### Running Keycloak 
-
+  #### Creating common network for focker 
+       ``docker network create sensorhub_lite``
+      
   #### Installing Keycloak and running it from docker
 
      docker run -d --name keycloak --restart=always -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e PROXY_ADDRESS_FORWARDING=true quay.io/keycloak/keycloak:23.0.6 start-dev
@@ -134,44 +136,7 @@ The provided commands configure the firewall to allow all incoming and outgoing 
 
 ### Deploying sensorHUB_LITE
 
-Create a systemd service file: Generate a service file for your sensorHUB_LITE:
 
- ```
- sudo nano /etc/systemd/system/sensorHUB_LITE.service
- ```
-
-Add the following configuration: Save the configuration below in the service file, then press Ctrl + O, hit Enter, and finally press Ctrl + X to exit.
-
-```
-[Unit]
-Description=sensorHUB_LITE
-After=network.target
-
-[Service]
-WorkingDirectory=/root/sensorHUB_LITE
-ExecStart=/usr/bin/python3 /root/sensorHUB_LITE/index.py
-Restart=always
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Reload the systemd daemon: Run the following command to reload the systemd configuration:
-
-``` 
-sudo systemctl daemon-reload
-```
-
-Restart the Flask application: Start your Flask application with the new configuration:
-```
-sudo systemctl restart sensorHUB_LITE
-
-```
-
-Check the running status: Verify the status of your Flask application:
-``` 
-systemctl status sensorHUB_LITE
 
 ```
     
