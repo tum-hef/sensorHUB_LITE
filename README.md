@@ -40,13 +40,13 @@ You can read more in our [contribution guidelines](CONTRIBUTING.md).
 
   #### Installing Keycloak and running it from docker
 
-     docker run -d --name keycloak --restart=always -p 8080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -e PROXY_ADDRESS_FORWARDING=true quay.io/keycloak/keycloak:23.0.6 start-dev
+     docker run -d --name keycloak --restart=always -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e PROXY_ADDRESS_FORWARDING=true quay.io/keycloak/keycloak:23.0.6 start-dev
 -   `docker run`: This is the command to run a Docker container.
 -   `-d`: This flag stands for "detached" mode, which means the container runs in the background.
 -   `--name keycloak`: This flag assigns the name "keycloak" to the running container.
 -   `--restart always`: This flag ensures that the container automatically restarts if it stops unexpectedly.
 -   `-p 8080:8080`: This flag maps port 8080 on the host machine to port 8080 on the container. Port 8080 is typically used for accessing Keycloak's web interface.
--   `-e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin`: These environment variables set the username and password for the initial Keycloak administrator account. In this case, the username is "admin" and the password is also "admin."
+-   `-e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin`: These environment variables set the username and password for the initial Keycloak administrator account. In this case, the username is "admin" and the password is also "admin."
 -   `-e PROXY_ADDRESS_FORWARDING=true`: This environment variable is set to "true" and is related to handling proxy address forwarding. It is often used when Keycloak is running behind a reverse proxy.
 -   `quay.io/keycloak/keycloak:23.0.6`: This is the name of the Docker image and 23.0.6 is the version that will be used to create the container. It specifies the official Keycloak Docker image provided by the quay organization.
 -   `start-dev`: This is used because we are using it in HTTP meanwhile start is used for HTTPS.
@@ -60,8 +60,8 @@ The provided Docker command runs a Keycloak container in detached mode, naming i
 `contaierID` - container ID of the keycloak
 
     docker exec -it {contaierID} bash
-    cd /opt/jboss/keycloak/bin
-    ./kcadm.sh config credentials --server http://localhost:8080/auth --realm master --user admin
+    cd /opt/keycloak/bin
+    ./kcadm.sh config credentials --server http://localhost:8080 --realm master --user admin
     (Enter your password that you typed in the arguments of running keycloak on the first step)
     ./kcadm.sh update realms/master -s sslRequired=NONE
 
