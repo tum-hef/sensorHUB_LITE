@@ -163,8 +163,8 @@ docker run --network=sensorhub_lite -u root -d -p 4500:4500 --env-file .env --na
 Change directory to the `WEB_APP` folder
 
 Creating a file `.env`
-
-    REACT_APP_NODE_ENV="development"   # for LITE-version; when in PRO mode replace it with production
+ 
+    REACT_APP_IS_DEVELOPMENT=true  # for LITE-version; when in PRO mode replace it with false
     REACT_APP_KEYCLOAK_URL=
     REACT_APP_KEYCLOAK_REALM=
     REACT_APP_KEYCLOAK_CLIENT_ID=
@@ -177,10 +177,10 @@ Creating a file `.env`
   
 
     docker build -t hefsensorhub_image_frontend .
-    docker run -p 3000:80 --env-file .env --name hefsensorhub_container_frontend -d --restart always hefsensorhub_image_frontend
+    docker run -p 3000:3000 --env-file .env --name hefsensorhub_container_frontend -d --restart always hefsensorhub_image_frontend
 
 -   `docker run`: This is the command to run a Docker container.
--   `-p 3000:80`: This flag maps port 3000 on the host machine to port 80 on the container. It establishes a communication bridge between the host and the container.
+-   `-p 3000:3000`: This flag maps port 3000 on the host machine to port 3000 on the container. It establishes a communication bridge between the host and the container.
 -   `--env-file .env`: This flag specifies an environment file (`.env`) to provide environment variables to the container. The file likely contains configuration settings needed by the frontend application.
 -   `--name hefsensorhub_container_frontend`: This flag assigns the name "hefsensorhub_container_frontend" to the running container.
 -   `-d`: This flag runs the container in detached mode, meaning it runs in the background.
