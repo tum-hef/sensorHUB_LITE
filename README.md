@@ -38,7 +38,7 @@ You can read more in our [contribution guidelines](CONTRIBUTING.md).
 
 ### Running Keycloak 
   #### Creating common network for focker 
-       ``docker network create sensorhub_lite``
+     docker network create sensorhub_lite
       
   #### Installing Keycloak and running it from docker
 
